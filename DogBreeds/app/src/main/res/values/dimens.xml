@@ -1,0 +1,11 @@
+<resources>
+    <dimen name="fab_margin">16dp</dimen>
+    <dimen name="small_padding">8dp</dimen>
+    <dimen name="big_padding">16dp</dimen>
+
+    <dimen name="cardview__margin">4dp</dimen>
+
+    <dimen name="text_horizontal_margin">16dp</dimen>
+    <dimen name="text_vertical_margin">8dp</dimen>
+
+</resources>
