@@ -133,10 +133,10 @@ public class AppDataRepository {
                     // Now, load pictures for each breed:
                     Iterator<String> iterator = mBreedSet.iterator();
 
-                    int i = 0;
-                    while (iterator.hasNext() && i < 7) {
-                        //while (iterator.hasNext()) {
-                        i++;
+                    //int i = 0;
+                    //while (iterator.hasNext() && i < 7) {
+                    while (iterator.hasNext()) {
+                        //i++;
                         String breed = iterator.next();
                         String parts[] = breed.split("-");
 
@@ -152,8 +152,8 @@ public class AppDataRepository {
                             Log.d(LOG_TAG, "Thread Running....");
                             Log.d(LOG_TAG, "THREAD breedSet.size()  = " + mBreedSet.size());
 
-                            //while((mDogBreedEntityList.size()) < mBreedSet.size()){
-                            while ((!Thread.currentThread().isInterrupted()) && (mDogBreedEntityList.size()) < 7) {
+                            while((mDogBreedEntityList.size()) < mBreedSet.size()){
+                            //while ((!Thread.currentThread().isInterrupted()) && (mDogBreedEntityList.size()) < 7) {
                                 // Wait until we have image urls for all breeds
 
                             }
