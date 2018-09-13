@@ -86,24 +86,11 @@
                 android:text="@string/more_button_text" />
 
 
-            <LinearLayout
-                android:id="@+id/list_layout"
+            <android.support.constraint.Placeholder
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/small_padding"
-                android:animateLayoutChanges="true"
-                android:background="@color/colorPrimaryLight"
-                android:orientation="horizontal"
-                android:visibility="gone">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="100dp"
-                    android:gravity="center"
-                    android:text="Display more pictures in a horizontal RecyclerView here. Click to hide."
-                    android:textSize="18sp" />
-
-            </LinearLayout>
+                android:background="@color/colorAccent"
+                android:id="@+id/placeholder"/>
 
 
         </LinearLayout>

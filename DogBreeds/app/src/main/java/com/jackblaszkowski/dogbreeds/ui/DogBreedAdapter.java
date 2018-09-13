@@ -2,10 +2,12 @@ package com.jackblaszkowski.dogbreeds.ui;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.constraint.Placeholder;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -56,7 +58,7 @@ public class DogBreedAdapter extends RecyclerView.Adapter<DogBreedAdapter.BreedV
         else
             holder.subBreedTextView.setText("-  " + capSubBreedName);
 
-        Context context = holder.parentLayout.getContext();
+        final Context context = holder.parentLayout.getContext();
 
 
         Glide.with(mContext).load(current.getUrlOne())
@@ -93,9 +95,16 @@ public class DogBreedAdapter extends RecyclerView.Adapter<DogBreedAdapter.BreedV
             @Override
             public void onClick(View view) {
 
-                holder.listLayout.setAlpha(0.0f);
-                holder.listLayout.setVisibility(View.VISIBLE);
-                holder.listLayout.animate().alpha(1.0f).setDuration(600);
+                //holder.listLayout.setAlpha(0.0f);
+                //holder.listLayout.setVisibility(View.VISIBLE);
+                //holder.listLayout.animate().alpha(1.0f).setDuration(600);
+
+                //Activity activity = (MainActivity)context;
+                //FrameLayout moreContainer = activity.findViewById(R.id.more_container);
+                Log.d("setOnClickListener", "CLICK =================");
+                holder.placeholder.setContentId(R.id.more_container);
+                holder.placeholder.setVisibility(View.VISIBLE);
+
 
 
                 holder.button.setEnabled(false);
@@ -103,13 +112,13 @@ public class DogBreedAdapter extends RecyclerView.Adapter<DogBreedAdapter.BreedV
             }
         });
 
-        holder.listLayout.setOnClickListener(new View.OnClickListener() {
+        holder.placeholder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                holder.listLayout.animate().alpha(0.0f).setDuration(600);
-                holder.listLayout.setVisibility(View.INVISIBLE);
-                holder.listLayout.setVisibility(View.GONE);
+                //holder.listLayout.animate().alpha(0.0f).setDuration(600);
+                //holder.listLayout.setVisibility(View.INVISIBLE);
+                //holder.listLayout.setVisibility(View.GONE);
 
                 holder.button.setEnabled(true);
 
@@ -146,7 +155,7 @@ public class DogBreedAdapter extends RecyclerView.Adapter<DogBreedAdapter.BreedV
 
         private final AppCompatButton button;
         private final CardView cardView;
-        private final LinearLayout listLayout;
+        private final Placeholder placeholder;
 
         private final LinearLayout parentLayout;
 
@@ -158,10 +167,10 @@ public class DogBreedAdapter extends RecyclerView.Adapter<DogBreedAdapter.BreedV
             imgOneView = itemView.findViewById(R.id.picture_one);
             imgTwoView = itemView.findViewById(R.id.picture_two);
             imgThreeView = itemView.findViewById(R.id.picture_three);
+            placeholder = itemView.findViewById(R.id.placeholder);
 
             button = itemView.findViewById(R.id.more_button);
             cardView = itemView.findViewById(R.id.card_view);
-            listLayout = itemView.findViewById(R.id.list_layout);
 
             parentLayout = itemView.findViewById(R.id.list_item_layout);
         }

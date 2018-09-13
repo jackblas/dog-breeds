@@ -19,6 +19,7 @@ import com.jackblaszkowski.dogbreeds.R;
 import com.jackblaszkowski.dogbreeds.Utils;
 import com.jackblaszkowski.dogbreeds.viewmodel.DogBreedViewModel;
 
+// MainActivity with more-fragment
 public class MainActivity extends AppCompatActivity implements MainActivityFragment.OnFragmentInteractionListener,
         SharedPreferences.OnSharedPreferenceChangeListener {
 
@@ -39,7 +40,6 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
 
         mProgressBar = (ProgressBar) findViewById(R.id.progressBar1);
 
-        // This is with-more-fragment-branch
         // Create a ViewModel the first time the system calls an activity's onCreate() method.
         // Re-created activities receive the same ViewModel instance created by the first activity.
         mViewModel = ViewModelProviders.of(this).get(DogBreedViewModel.class);
