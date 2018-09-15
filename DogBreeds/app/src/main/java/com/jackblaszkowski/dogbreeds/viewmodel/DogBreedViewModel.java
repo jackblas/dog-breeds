@@ -13,7 +13,9 @@ public class DogBreedViewModel extends AndroidViewModel {
 
     private AppDataRepository mRepository;
 
-    private LiveData<List<DogBreedEntity>> mDogBreedPictures;
+    private LiveData<List<DogBreedEntity>> mDogBreedEntities;
+
+    private LiveData<List<String>> mDogBreedMorePictures;
 
     public DogBreedViewModel(Application application) {
         super(application);
@@ -24,9 +26,14 @@ public class DogBreedViewModel extends AndroidViewModel {
         mRepository.refreshData();
     }
 
-    public LiveData<List<DogBreedEntity>> getDogBreedPictures() {
-        mDogBreedPictures = mRepository.getAllBreedsPictures();
-        return mDogBreedPictures;
+    public LiveData<List<DogBreedEntity>> getDogBreeds() {
+        mDogBreedEntities = mRepository.getAllBreeds();
+        return mDogBreedEntities;
+    }
+
+    public LiveData<List<String>> getMoreImages(String breed, String subBreed) {
+        mDogBreedMorePictures = mRepository.getMoreImages(breed, subBreed);
+        return mDogBreedMorePictures;
     }
 
 

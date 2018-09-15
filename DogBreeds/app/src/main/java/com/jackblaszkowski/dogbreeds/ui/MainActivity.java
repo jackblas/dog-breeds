@@ -19,6 +19,7 @@ import com.jackblaszkowski.dogbreeds.R;
 import com.jackblaszkowski.dogbreeds.Utils;
 import com.jackblaszkowski.dogbreeds.viewmodel.DogBreedViewModel;
 
+// MainActivity with more-fragment
 public class MainActivity extends AppCompatActivity implements MainActivityFragment.OnFragmentInteractionListener,
         SharedPreferences.OnSharedPreferenceChangeListener {
 

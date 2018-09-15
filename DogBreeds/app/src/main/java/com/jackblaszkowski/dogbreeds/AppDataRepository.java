@@ -12,6 +12,7 @@ import com.jackblaszkowski.dogbreeds.api.DogApiClientFactory;
 import com.jackblaszkowski.dogbreeds.database.AppDatabase;
 import com.jackblaszkowski.dogbreeds.database.DogBreedDao;
 import com.jackblaszkowski.dogbreeds.database.DogBreedEntity;
+import com.jackblaszkowski.dogbreeds.database.DogImageEntity;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -61,12 +62,21 @@ public class AppDataRepository {
     }
 
     // Returns LiveData for the MainActivityFragment
-    public LiveData<List<DogBreedEntity>> getAllBreedsPictures() {
+    public LiveData<List<DogBreedEntity>> getAllBreeds() {
 
         LiveData<List<DogBreedEntity>> dogsLiveData = mBreedDao.loadMainActivityPictures();
         loadDatabaseIfEmpty();
 
         return dogsLiveData;
+    }
+
+    // Returns LiveData for the MorePhotosFragment
+    public LiveData<List<String>> getMoreImages(String breed, String subBreed) {
+
+        LiveData<List<String>> pictureUrls = mBreedDao.loadBreedImages(breed,subBreed);
+        loadImagesIfEmpty(breed,subBreed);
+
+        return pictureUrls;
     }
 
 
@@ -80,6 +90,33 @@ public class AppDataRepository {
         new insertAsyncTask(mBreedDao).execute(dogBreedEntity);
     }
     */
+
+    private void loadImagesIfEmpty(final String breed, final String subBreed) {
+
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+
+        try {
+            executor.execute(new Thread() {
+                @Override
+                public void run() {
+                    Log.d(LOG_TAG, "Checking for images for " + breed + "-" + subBreed);
+                    DogImageEntity dogBreedEntity = mBreedDao.hasImages(breed,subBreed);
+
+                    if (dogBreedEntity == null) {
+                        Log.d(LOG_TAG, "No images: connecting to the server");
+                        loadBreedImages(breed,subBreed);
+                    } else {
+                        Log.d(LOG_TAG, "Images loaded.");
+                    }
+                }
+            });
+
+        } finally {
+            executor.shutdown();
+        }
+
+    }
+
 
     private void loadDatabaseIfEmpty() {
 
@@ -106,6 +143,83 @@ public class AppDataRepository {
         }
 
     }
+
+
+    // Load More Photos
+    private void loadBreedImages(final String breed, final String subBreed) {
+        Log.d(LOG_TAG, "In loadBreedImages() breed: " + breed + " - subbreed: " + subBreed);
+        Utils.setServerStatus(sContext,Utils.STATUS_SERVER_OK);
+
+        DogApiClient client = new DogApiClientFactory().getDogApiClient(DogApiClientFactory.CALL_IMAGES);
+
+        Call<BreedImagesResponse> call;
+
+        if(breed.equals(subBreed)) {
+            call = client.listAllBreedImages(breed);
+
+        } else {
+            call = client.listAllSubBreedImages(breed,subBreed);
+        }
+
+        call.enqueue(new Callback<BreedImagesResponse>() {
+            @Override
+            public void onResponse(Call<BreedImagesResponse> call, Response<BreedImagesResponse> response) {
+                BreedImagesResponse body = response.body();
+
+                // TODO: Handle NullPointerException
+                if(response.isSuccessful() && (body.getMessage() != null)) {
+
+                    try {
+                        //TODO: Validate url strings here
+                        String[] urls = body.getMessage();
+
+                        int i = 0;
+                        for (final String url : urls) {
+                            i++;
+                            Log.v(LOG_TAG, "Inserting a record for: " + breed + "-" + subBreed + " url= " +url);
+                            // Some breeds have hundreds of images.
+                            // To reduce network traffic, we load up to 24 images per breed
+                            if(i > 24 || i > urls.length)
+                                break;
+
+                            // Insert a record into the database
+                            mExecutorService.execute(new Thread(){
+                                @Override
+                                public void run() {
+                                    mBreedDao.insertImage(new DogImageEntity(url, breed,subBreed));
+                                }
+                            });
+                        }
+
+                    }catch(Exception e){
+                        Log.e(LOG_TAG, "Corrupted data for: " + breed + subBreed);
+                        Log.e(LOG_TAG, "Exception: " + e);
+                        //corruptedRecordsCount.incrementAndGet();
+                    }
+
+                } else {
+                    //TODO: handle server errors if code() is in not the range [200..300)
+                    //Log and display server error
+                    Log.e("AppDataRepository", "Set Status to: STATUS_SERVER_ERROR");
+                    Utils.setServerStatus(sContext,Utils.STATUS_SERVER_ERROR);
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<BreedImagesResponse> call, Throwable t) {
+
+                Log.e("AppDataRepository", "API Call listAllBreedImages () Failure: " + t.getMessage());
+                //Log and display server error
+                Log.e("AppDataRepository", "Set Status to: STATUS_SERVER_ERROR");
+                Utils.setServerStatus(sContext,Utils.STATUS_SERVER_ERROR);
+            }
+        });
+
+
+
+    }
+
 
 
     // Call API to refresh
@@ -136,7 +250,7 @@ public class AppDataRepository {
                     //int i = 0;
                     //while (iterator.hasNext() && i < 7) {
                     while (iterator.hasNext()) {
-                        //i++;
+                        //i++;                   
                         String breed = iterator.next();
                         String parts[] = breed.split("-");
 
@@ -186,7 +300,7 @@ public class AppDataRepository {
 
 
     private void getRandomImages(final String breed, final String subBreed) {
-        Log.d(LOG_TAG, "In getRandomImages()");
+        //Log.v(LOG_TAG, "In getRandomImages()");
 
         DogApiClient client = new DogApiClientFactory().getDogApiClient(DogApiClientFactory.CALL_IMAGES);
 
@@ -202,6 +316,7 @@ public class AppDataRepository {
             @Override
             public void onResponse(Call<BreedImagesResponse> call, Response<BreedImagesResponse> response) {
                 BreedImagesResponse body = response.body();
+                Log.v(LOG_TAG, "Response 2: " + response.toString());
 
                 // TODO: Handle NullPointerException
                 if (response.isSuccessful() && (body.getMessage() != null)) {
