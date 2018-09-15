@@ -1,16 +1,16 @@
 package com.jackblaszkowski.dogbreeds.ui;
 
+import android.animation.ObjectAnimator;
 import android.content.Context;
+import android.os.SystemClock;
 import android.support.annotation.NonNull;
-import android.support.constraint.Placeholder;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.AppCompatButton;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -25,12 +25,13 @@ import java.util.List;
 public class DogBreedAdapter extends RecyclerView.Adapter<DogBreedAdapter.BreedViewHolder> {
 
     private final LayoutInflater mInflater;
+    private final MainActivityFragment mFragment;
     private boolean mOnline = true;
     private List<DogBreedEntity> mEntities;
-    private Context mContext;
-    DogBreedAdapter(Context context) {
-        mInflater = LayoutInflater.from(context);
-        mContext = (FragmentActivity) context;
+
+    DogBreedAdapter(MainActivityFragment mainActivityFragment) {
+        mInflater = LayoutInflater.from(mainActivityFragment.getContext());
+        mFragment = mainActivityFragment;
     }
 
     @Override
@@ -44,7 +45,7 @@ public class DogBreedAdapter extends RecyclerView.Adapter<DogBreedAdapter.BreedV
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final BreedViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final BreedViewHolder holder, final int position) {
 
         final DogBreedEntity current = mEntities.get(position);
 
@@ -61,7 +62,7 @@ public class DogBreedAdapter extends RecyclerView.Adapter<DogBreedAdapter.BreedV
         final Context context = holder.parentLayout.getContext();
 
 
-        Glide.with(mContext).load(current.getUrlOne())
+        Glide.with(context).load(current.getUrlOne())
                 .diskCacheStrategy(DiskCacheStrategy.RESULT)
                 .placeholder(R.drawable.ic_image_gray_24dp)
                 .error(R.drawable.ic_image_gray_24dp)
@@ -95,36 +96,42 @@ public class DogBreedAdapter extends RecyclerView.Adapter<DogBreedAdapter.BreedV
             @Override
             public void onClick(View view) {
 
-                //holder.listLayout.setAlpha(0.0f);
-                //holder.listLayout.setVisibility(View.VISIBLE);
-                //holder.listLayout.animate().alpha(1.0f).setDuration(600);
 
-                //Activity activity = (MainActivity)context;
-                //FrameLayout moreContainer = activity.findViewById(R.id.more_container);
-                Log.d("setOnClickListener", "CLICK =================");
-                holder.placeholder.setContentId(R.id.more_container);
-                holder.placeholder.setVisibility(View.VISIBLE);
+                // Display the More Photos fragment and toggle the button
+                // This may not the most elegant solution but it work:
+                if((holder.button.getText()).equals(context.getResources().getString(R.string.more_button_text))) {
+                    holder.placeholder.setX((float)holder.parentLayout.getWidth());
+                    holder.placeholder.setVisibility(View.VISIBLE);
+                    MorePhotosFragment fragment = MorePhotosFragment.newInstance(current.getBreed(), current.getSubBreed());
+
+                    holder.placeholder.setId((int) SystemClock.currentThreadTimeMillis());
+
+                    ((FragmentActivity)context).getSupportFragmentManager().beginTransaction()
+                            .replace(holder.placeholder.getId(), fragment)
+                            .commit();
+
+                    ObjectAnimator animation = ObjectAnimator.ofFloat(holder.placeholder, "translationX", -0.0f);
+                    animation.setDuration(1200);
+                    animation.start();
+
+                    holder.button.setText(R.string.fewer_button_text);
+
+                    //TODO: Scroll to have entire card visible
+                    //RecyclerView rv= mFragment.getRecyclerView();
+                    //rv.smoothScrollToPosition(position+1);
 
 
 
-                holder.button.setEnabled(false);
+                } else {
+
+                    holder.placeholder.setVisibility(View.GONE);
+                    holder.button.setText(R.string.more_button_text);
+
+
+                }
 
             }
         });
-
-        holder.placeholder.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                //holder.listLayout.animate().alpha(0.0f).setDuration(600);
-                //holder.listLayout.setVisibility(View.INVISIBLE);
-                //holder.listLayout.setVisibility(View.GONE);
-
-                holder.button.setEnabled(true);
-
-            }
-        });
-
 
     }
 
@@ -154,8 +161,7 @@ public class DogBreedAdapter extends RecyclerView.Adapter<DogBreedAdapter.BreedV
         private final ImageView imgThreeView;
 
         private final AppCompatButton button;
-        private final CardView cardView;
-        private final Placeholder placeholder;
+        private final FrameLayout placeholder;
 
         private final LinearLayout parentLayout;
 
@@ -167,11 +173,9 @@ public class DogBreedAdapter extends RecyclerView.Adapter<DogBreedAdapter.BreedV
             imgOneView = itemView.findViewById(R.id.picture_one);
             imgTwoView = itemView.findViewById(R.id.picture_two);
             imgThreeView = itemView.findViewById(R.id.picture_three);
-            placeholder = itemView.findViewById(R.id.placeholder);
+            placeholder = itemView.findViewById(R.id.more_container);
 
             button = itemView.findViewById(R.id.more_button);
-            cardView = itemView.findViewById(R.id.card_view);
-
             parentLayout = itemView.findViewById(R.id.list_item_layout);
         }
     }

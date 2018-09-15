@@ -9,3 +9,6 @@ Third-Party libraries used:
 - Glide
 - Retrofit
 - Gson
+
+## What's New (09/15/2018)
+- Added a fragment to view more photos for the breed selected

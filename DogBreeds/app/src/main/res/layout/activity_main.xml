@@ -21,10 +21,7 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/content_more"/>
-
     <include layout="@layout/content_main" />
-
 
     <ProgressBar
         android:id="@+id/progressBar1"

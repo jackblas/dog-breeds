@@ -26,6 +26,7 @@ import java.util.List;
 public class MainActivityFragment extends Fragment {
 
     private DogBreedViewModel mViewModel;
+    private RecyclerView mRecyclerView;
     private DogBreedAdapter adapter;
     private View mRootView;
 
@@ -75,11 +76,12 @@ public class MainActivityFragment extends Fragment {
                              Bundle savedInstanceState) {
         //return inflater.inflate(R.layout.fragment_main, container, false);
         mRootView = inflater.inflate(R.layout.fragment_main, container, false);
-        RecyclerView recyclerView = mRootView.findViewById(R.id.recyclerview);
+        mRecyclerView = mRootView.findViewById(R.id.recyclerview);
 
-        adapter = new DogBreedAdapter(this.getContext());
-        recyclerView.setAdapter(adapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this.getContext()));
+        adapter = new DogBreedAdapter(this);
+        //adapter.setHasStableIds(true);
+        mRecyclerView.setAdapter(adapter);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this.getContext()));
 
         return mRootView;
     }
@@ -92,7 +94,7 @@ public class MainActivityFragment extends Fragment {
         mViewModel = ViewModelProviders.of(getActivity()).get(DogBreedViewModel.class);
 
         // Add an observer on the LiveData .
-        mViewModel.getDogBreedPictures().observe(this, new Observer<List<DogBreedEntity>>() {
+        mViewModel.getDogBreeds().observe(this, new Observer<List<DogBreedEntity>>() {
             @Override
             public void onChanged(@Nullable final List<DogBreedEntity> entityList) {
                 // Update the cached copy of data in the adapter.
@@ -126,6 +128,11 @@ public class MainActivityFragment extends Fragment {
         super.onDetach();
         mListener = null;
         getActivity().unregisterReceiver(mConnectivityChangeReceiver);
+    }
+
+
+    RecyclerView getRecyclerView() {
+        return mRecyclerView;
     }
 
     public interface OnFragmentInteractionListener {

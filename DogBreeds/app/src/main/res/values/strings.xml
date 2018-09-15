@@ -5,6 +5,8 @@
     <string name="action_refresh">Refresh</string>
 
     <string name="more_button_text">View More Photos</string>
+    <string name="fewer_button_text">View Fewer Photos</string>
+
 
     <!-- Messages -->
     <string name="no_connection_message">No internet connection!</string>

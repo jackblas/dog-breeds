@@ -7,7 +7,7 @@ import android.arch.persistence.room.RoomDatabase;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
-@Database(entities = {DogBreedEntity.class}, version = 1, exportSchema = false)
+@Database(entities = {DogBreedEntity.class, DogImageEntity.class}, version = 2, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
 
     private final static String DATABASE_NAME = "dogbreeds_database";
@@ -39,6 +39,5 @@ public abstract class AppDatabase extends RoomDatabase {
     }
 
     public abstract DogBreedDao breedDao();
-
 
 }
