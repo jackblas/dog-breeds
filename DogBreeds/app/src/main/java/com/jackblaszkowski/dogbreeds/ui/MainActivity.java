@@ -87,7 +87,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
         if (id == R.id.action_refresh) {
 
             mProgressBar.setVisibility(View.VISIBLE);
-            mViewModel.refreshData();
+            mViewModel.setRefresh(true);
 
             return true;
         }

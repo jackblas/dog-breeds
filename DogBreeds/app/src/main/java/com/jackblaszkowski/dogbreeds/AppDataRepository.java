@@ -62,10 +62,15 @@ public class AppDataRepository {
     }
 
     // Returns LiveData for the MainActivityFragment
-    public LiveData<List<DogBreedEntity>> getAllBreeds() {
+    public LiveData<List<DogBreedEntity>> getAllBreeds(boolean refresh) {
 
         LiveData<List<DogBreedEntity>> dogsLiveData = mBreedDao.loadMainActivityPictures();
-        loadDatabaseIfEmpty();
+
+        if(refresh){
+            refreshData();
+        } else {
+            loadDatabaseIfEmpty();
+        }
 
         return dogsLiveData;
     }
@@ -223,7 +228,7 @@ public class AppDataRepository {
 
 
     // Call API to refresh
-    public void refreshData() {
+    private void refreshData() {
         Log.d(LOG_TAG, "In refreshData()");
         Utils.setServerStatus(sContext, Utils.STATUS_SERVER_OK);
 

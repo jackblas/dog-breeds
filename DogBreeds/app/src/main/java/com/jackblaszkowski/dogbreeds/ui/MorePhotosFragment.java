@@ -12,7 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.jackblaszkowski.dogbreeds.R;
-import com.jackblaszkowski.dogbreeds.viewmodel.DogBreedViewModel;
+import com.jackblaszkowski.dogbreeds.viewmodel.BreedImagesViewModel;
 
 import java.util.List;
 
@@ -24,7 +24,7 @@ public class MorePhotosFragment extends Fragment{
     private String mBreed;
     private String mSubBreed;
 
-    private DogBreedViewModel mViewModel;
+    private BreedImagesViewModel mViewModel;
     private MorePhotosAdapter adapter;
     private View mRootView;
 
@@ -62,7 +62,7 @@ public class MorePhotosFragment extends Fragment{
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this.getContext(), LinearLayoutManager.HORIZONTAL, false));
 
-        mViewModel= ViewModelProviders.of(getActivity()).get(DogBreedViewModel.class);
+        mViewModel= ViewModelProviders.of(getActivity()).get(BreedImagesViewModel.class);
 
         return mRootView;
     }
@@ -73,8 +73,9 @@ public class MorePhotosFragment extends Fragment{
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+        mViewModel.setBreed(mBreed, mSubBreed);
         // Add an observer on the LiveData .
-        mViewModel.getMoreImages(mBreed, mSubBreed).observe(this, new Observer<List<String>>() {
+        mViewModel.getMoreImages().observe(this, new Observer<List<String>>() {
             @Override
             public void onChanged(@Nullable final List<String> entityList) {
                 // Update the cached copy of data in the adapter.

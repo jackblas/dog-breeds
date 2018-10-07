@@ -3,6 +3,9 @@ package com.jackblaszkowski.dogbreeds.viewmodel;
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MutableLiveData;
+import android.arch.lifecycle.Transformations;
+import android.support.annotation.NonNull;
 
 import com.jackblaszkowski.dogbreeds.AppDataRepository;
 import com.jackblaszkowski.dogbreeds.database.DogBreedEntity;
@@ -13,30 +16,26 @@ public class DogBreedViewModel extends AndroidViewModel {
 
     private AppDataRepository mRepository;
 
+    private MutableLiveData<Boolean> refresh = new MutableLiveData<>();
     private LiveData<List<DogBreedEntity>> mDogBreedEntities;
 
-    private LiveData<List<String>> mDogBreedMorePictures;
-
-    public DogBreedViewModel(Application application) {
+    public DogBreedViewModel(@NonNull Application application) {
         super(application);
         mRepository = AppDataRepository.getInstance(application);
-    }
 
-    public void refreshData() {
-        mRepository.refreshData();
+        mDogBreedEntities = Transformations.switchMap(refresh, (refresh) -> {
+            return mRepository.getAllBreeds(refresh);
+        });
+
     }
 
     public LiveData<List<DogBreedEntity>> getDogBreeds() {
-        mDogBreedEntities = mRepository.getAllBreeds();
         return mDogBreedEntities;
     }
 
-    public LiveData<List<String>> getMoreImages(String breed, String subBreed) {
-        mDogBreedMorePictures = mRepository.getMoreImages(breed, subBreed);
-        return mDogBreedMorePictures;
+    public void setRefresh(boolean refresh) {
+        this.refresh.setValue(refresh);
+
     }
 
-
-    //public void insert(DogBreedEntity dogBreedEntity) { mRepository.insert(dogBreedEntity); }
-    //public void insertAll(List<DogBreedEntity> dogBreedEntityList) { mRepository.insertAll(dogBreedEntityList); }
 }

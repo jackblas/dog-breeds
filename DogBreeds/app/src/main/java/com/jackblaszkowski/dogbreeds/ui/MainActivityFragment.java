@@ -92,6 +92,7 @@ public class MainActivityFragment extends Fragment {
 
 
         mViewModel = ViewModelProviders.of(getActivity()).get(DogBreedViewModel.class);
+        mViewModel.setRefresh(false);
 
         // Add an observer on the LiveData .
         mViewModel.getDogBreeds().observe(this, new Observer<List<DogBreedEntity>>() {
