@@ -5,7 +5,7 @@
     <color name="colorPrimaryDark">#1976D2</color>
     <color name="colorAccent">#FFC107</color>
     <color name="colorTextPrimary">#FFFFFF</color>
-    <!--<color name="colorScreenBackground">#fff3e0</color> -->
+    <!--<color name="colorScreenBackground">#fafafa</color> -->
     <color name="colorScreenBackground">#fafafa</color>
     <color name="colorTextHint">#E0E0E0</color>
     <color name="colorTextSecondary">#757575</color>

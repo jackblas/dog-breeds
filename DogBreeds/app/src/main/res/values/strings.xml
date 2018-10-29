@@ -10,8 +10,10 @@
 
     <!-- Messages -->
     <string name="no_connection_message">No internet connection!</string>
-    <string name="timed_out_message">Connection timed out.</string>
-    <string name="server_error_message">Error: Internal server error.</string>
+    <string name="timed_out_message">Connection timed out</string>
+    <string name="server_error_message">Internal server error</string>
+    <string name="not_found_error_message">Resource not found</string>
+    <string name="unexpected_error_message">Unexpected error occurred</string>
 
     <!-- Shared Preferences keys -->
     <string name="pref_server_status_key" translatable="false">server_status</string>

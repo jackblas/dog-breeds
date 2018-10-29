@@ -6,19 +6,24 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.jackblaszkowski.dogbreeds.R;
 import com.jackblaszkowski.dogbreeds.Utils;
 import com.jackblaszkowski.dogbreeds.database.DogBreedEntity;
+import com.jackblaszkowski.dogbreeds.repository.Resource;
 import com.jackblaszkowski.dogbreeds.viewmodel.DogBreedViewModel;
 
 import java.util.List;
@@ -28,6 +33,7 @@ public class MainActivityFragment extends Fragment {
     private DogBreedViewModel mViewModel;
     private RecyclerView mRecyclerView;
     private DogBreedAdapter adapter;
+    private ProgressBar mProgressBar;
     private View mRootView;
 
     private OnFragmentInteractionListener mListener;
@@ -44,7 +50,6 @@ public class MainActivityFragment extends Fragment {
                 adapter.notifyDataSetChanged();
 
                 mListener.onConnectivityChanged(false);
-                Utils.setServerStatus(context, Utils.STATUS_NO_CONNECTION);
 
             } else {
                 //On-line
@@ -55,8 +60,6 @@ public class MainActivityFragment extends Fragment {
                 adapter.notifyDataSetChanged();
 
                 mListener.onConnectivityChanged(true);
-                Utils.setServerStatus(context, Utils.STATUS_SERVER_OK);
-
             }
         }
 
@@ -74,14 +77,15 @@ public class MainActivityFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        //return inflater.inflate(R.layout.fragment_main, container, false);
+
         mRootView = inflater.inflate(R.layout.fragment_main, container, false);
         mRecyclerView = mRootView.findViewById(R.id.recyclerview);
 
         adapter = new DogBreedAdapter(this);
-        //adapter.setHasStableIds(true);
         mRecyclerView.setAdapter(adapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this.getContext()));
+
+        mProgressBar =  mRootView.findViewById(R.id.progressBar1);
 
         return mRootView;
     }
@@ -90,22 +94,27 @@ public class MainActivityFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-
-        mViewModel = ViewModelProviders.of(getActivity()).get(DogBreedViewModel.class);
+        mViewModel = ViewModelProviders.of(this).get(DogBreedViewModel.class);
+        mViewModel.getDogBreeds().removeObservers(this);
         mViewModel.setRefresh(false);
 
         // Add an observer on the LiveData .
-        mViewModel.getDogBreeds().observe(this, new Observer<List<DogBreedEntity>>() {
+        mViewModel.getDogBreeds().observe(this, new Observer<Resource<List<DogBreedEntity>>>() {
             @Override
-            public void onChanged(@Nullable final List<DogBreedEntity> entityList) {
+            public void onChanged(@Nullable final Resource<List<DogBreedEntity>> resource) {
                 // Update the cached copy of data in the adapter.
-                adapter.setEntities(entityList);
-                // Hide progress bar:
-                //Log.d("MainActivityFragment","Hide progress bar");
-                mListener.onDataLoaded();
+                if(resource.data != null) {
+                    adapter.setEntities(resource.data);
+                }
+
+                resetProgressBar(resource.status);
+
+                if (resource.status == Resource.Status.ERROR) {
+                    showErrorMessage(resource.errorType);
+                }
+
             }
         });
-
 
     }
 
@@ -131,16 +140,55 @@ public class MainActivityFragment extends Fragment {
         getActivity().unregisterReceiver(mConnectivityChangeReceiver);
     }
 
+    void setRefresh(){
+        mViewModel.setRefresh(true);
+    }
+
 
     RecyclerView getRecyclerView() {
         return mRecyclerView;
     }
 
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        //void onFragmentInteraction();
-        void onDataLoaded();
 
         void onConnectivityChanged(boolean enabled);
+    }
+
+    private void resetProgressBar(Resource.Status status){
+
+        if (status == Resource.Status.LOADING) {
+            mProgressBar.setVisibility(View.VISIBLE);
+        } else {
+            mProgressBar.setVisibility(View.GONE);
+        }
+    }
+
+    private void showErrorMessage(Resource.ErrorType error) {
+
+        String message;
+
+
+        switch (error){
+            case NOT_FOUND:
+                message = getResources().getString(R.string.not_found_error_message);
+                break;
+            case SERVER_ERROR:
+                message = getResources().getString(R.string.server_error_message);
+                break;
+            case NO_CONNECTION:
+                message = getResources().getString(R.string.no_connection_message);
+                break;
+
+            default:
+                message = getResources().getString(R.string.unexpected_error_message);
+                break;
+        }
+
+        Snackbar snackbar = Snackbar.make(mRootView, message, Snackbar.LENGTH_LONG);
+
+        View sbView = snackbar.getView();
+        TextView textView = sbView.findViewById(android.support.design.R.id.snackbar_text);
+        textView.setTextColor(Color.YELLOW);
+        snackbar.show();
     }
 }

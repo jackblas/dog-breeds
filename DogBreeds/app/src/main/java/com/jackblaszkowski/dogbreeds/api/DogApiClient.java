@@ -9,24 +9,23 @@ public interface DogApiClient {
     String BASE_URL = "https://dog.ceo/api/";
 
     @GET("breeds/list/all")
-    Call<BreedListResponse> listAllBreeds();
+    Call<BreedListResponse> getAllBreeds();
 
     // https://dog.ceo/api/breed/chihuahua/images/random/3
     @GET("breed/{breed}/images/random/3")
-    Call<BreedImagesResponse> listBreedImages(@Path("breed") String breed);
+    Call<BreedImagesResponse> getBreedImages(@Path("breed") String breed);
 
     // https://dog.ceo/api/breed/ridgeback/rhodesian/images/random/3
     @GET("breed/{breed}/{subbreed}/images/random/3")
-    Call<BreedImagesResponse> listSubBreedImages(@Path("breed") String breed, @Path("subbreed") String subBreed);
+    Call<BreedImagesResponse> getSubBreedImages(@Path("breed") String breed, @Path("subbreed") String subBreed);
 
     // https://dog.ceo/api/breed/chihuahua/images
-    // This will also return an object. They will be added to a list by the Repository!
     @GET("breed/{breed}/images")
-    Call<BreedImagesResponse> listAllBreedImages(@Path("breed") String breed);
+    Call<BreedImagesResponse> getAllBreedImages(@Path("breed") String breed);
 
     // https://dog.ceo/api/breed/ridgeback/rhodesian/images
     @GET("breed/{breed}/{subbreed}/images")
-    Call<BreedImagesResponse> listAllSubBreedImages(@Path("breed") String breed, @Path("subbreed") String subBreed);
+    Call<BreedImagesResponse> getAllSubBreedImages(@Path("breed") String breed, @Path("subbreed") String subBreed);
 
 
 }

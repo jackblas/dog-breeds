@@ -1,7 +1,6 @@
 package com.jackblaszkowski.dogbreeds.database;
 
 import android.arch.persistence.room.Entity;
-import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 
@@ -17,10 +16,6 @@ public class DogImageEntity {
     @NonNull
     private String subBreed;
 
-    @Ignore
-    public DogImageEntity() {
-    }
-
     public DogImageEntity(@NonNull String url, @NonNull String breed, @NonNull String subBreed) {
         this.url = url;
         this.breed = breed;
@@ -32,17 +27,9 @@ public class DogImageEntity {
         return url;
     }
 
-    public void setUrl(@NonNull String url) {
-        this.url = url;
-    }
-
     @NonNull
     public String getBreed() {
         return breed;
-    }
-
-    public void setBreed(@NonNull String breed) {
-        this.breed = breed;
     }
 
     @NonNull
@@ -50,7 +37,4 @@ public class DogImageEntity {
         return subBreed;
     }
 
-    public void setSubBreed(@NonNull String subBreed) {
-        this.subBreed = subBreed;
-    }
 }

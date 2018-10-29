@@ -9,13 +9,21 @@
     tools:context=".ui.MainActivityFragment"
     tools:showIn="@layout/activity_main">
 
-
-
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recyclerview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/small_padding"
         tools:listitem="@layout/recyclerview_item" />
+
+    <ProgressBar
+        android:id="@+id/progressBar1"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="100dp"
+        android:visibility="gone"
+        app:layout_anchor="@id/toolbar"
+        app:layout_anchorGravity="center_vertical|center_horizontal" />
 
 </android.support.constraint.ConstraintLayout>

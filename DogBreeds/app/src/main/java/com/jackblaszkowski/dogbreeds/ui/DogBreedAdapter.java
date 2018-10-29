@@ -1,8 +1,6 @@
 package com.jackblaszkowski.dogbreeds.ui;
 
-import android.animation.ObjectAnimator;
 import android.content.Context;
-import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.AppCompatButton;
@@ -96,39 +94,12 @@ public class DogBreedAdapter extends RecyclerView.Adapter<DogBreedAdapter.BreedV
             @Override
             public void onClick(View view) {
 
+                MorePhotosFragment fragment = MorePhotosFragment.newInstance(current.getBreed(), current.getSubBreed());
 
-                // Display the More Photos fragment and toggle the button
-                // This may not the most elegant solution but it work:
-                if((holder.button.getText()).equals(context.getResources().getString(R.string.more_button_text))) {
-                    holder.placeholder.setX((float)holder.parentLayout.getWidth());
-                    holder.placeholder.setVisibility(View.VISIBLE);
-                    MorePhotosFragment fragment = MorePhotosFragment.newInstance(current.getBreed(), current.getSubBreed());
-
-                    holder.placeholder.setId((int) SystemClock.currentThreadTimeMillis());
-
-                    ((FragmentActivity)context).getSupportFragmentManager().beginTransaction()
-                            .replace(holder.placeholder.getId(), fragment)
+                ((FragmentActivity)context).getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.main_container, fragment)
+                            .addToBackStack(null)
                             .commit();
-
-                    ObjectAnimator animation = ObjectAnimator.ofFloat(holder.placeholder, "translationX", -0.0f);
-                    animation.setDuration(1200);
-                    animation.start();
-
-                    holder.button.setText(R.string.fewer_button_text);
-
-                    //TODO: Scroll to have entire card visible
-                    //RecyclerView rv= mFragment.getRecyclerView();
-                    //rv.smoothScrollToPosition(position+1);
-
-
-
-                } else {
-
-                    holder.placeholder.setVisibility(View.GONE);
-                    holder.button.setText(R.string.more_button_text);
-
-
-                }
 
             }
         });
@@ -136,6 +107,7 @@ public class DogBreedAdapter extends RecyclerView.Adapter<DogBreedAdapter.BreedV
     }
 
     void setEntities(List<DogBreedEntity> entities) {
+
         mEntities = entities;
         notifyDataSetChanged();
     }

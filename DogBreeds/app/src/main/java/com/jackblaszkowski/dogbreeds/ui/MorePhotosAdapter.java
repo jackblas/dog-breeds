@@ -13,6 +13,7 @@ import android.widget.LinearLayout;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.jackblaszkowski.dogbreeds.R;
+import com.jackblaszkowski.dogbreeds.database.DogImageEntity;
 
 import java.util.List;
 
@@ -40,7 +41,7 @@ public class MorePhotosAdapter extends RecyclerView.Adapter<MorePhotosAdapter.Ph
     }
 
     private final LayoutInflater mInflater;
-    private List<String> mUrls;
+    private List<DogImageEntity> mUrls;
     private Context mContext;
 
     @NonNull
@@ -53,20 +54,18 @@ public class MorePhotosAdapter extends RecyclerView.Adapter<MorePhotosAdapter.Ph
 
     @Override
     public void onBindViewHolder(@NonNull MorePhotosAdapter.PhotoViewHolder holder, int position) {
-        final String current = mUrls.get(position);
+        final DogImageEntity current = mUrls.get(position);
 
 
-            Glide.with(mContext).load(current)
+            Glide.with(mContext).load(current.getUrl())
                     .diskCacheStrategy(DiskCacheStrategy.RESULT)
                     .placeholder(R.drawable.ic_image_gray_24dp)
                     .error(R.drawable.ic_image_gray_24dp)
-                    .override(150, 150)
-                    .centerCrop()
                     .into(holder.imageView);
 
     }
 
-    void setEntities(List<String> entities){
+    void setEntities(List<DogImageEntity> entities){
         mUrls = entities;
         notifyDataSetChanged();
     }

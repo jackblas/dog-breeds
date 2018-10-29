@@ -8,22 +8,24 @@ import android.arch.lifecycle.Transformations;
 import android.support.annotation.NonNull;
 import android.support.v4.util.Pair;
 
-import com.jackblaszkowski.dogbreeds.AppDataRepository;
+import com.jackblaszkowski.dogbreeds.database.DogImageEntity;
+import com.jackblaszkowski.dogbreeds.repository.DogImageRepository;
+import com.jackblaszkowski.dogbreeds.repository.Resource;
 
 import java.util.List;
 
 public class BreedImagesViewModel extends AndroidViewModel {
 
-    private AppDataRepository mRepository;
+    private DogImageRepository mRepository;
     private MutableLiveData<Pair<String,String>> breedName = new MutableLiveData<>();
-    private LiveData<List<String>> mDogBreedMorePictures;
+    private LiveData<Resource<List<DogImageEntity>>> mDogBreedMorePictures;
 
     public BreedImagesViewModel(@NonNull Application application) {
         super(application);
-        mRepository = AppDataRepository.getInstance(application);
+        mRepository = DogImageRepository.getInstance(application);
 
         mDogBreedMorePictures = Transformations.switchMap(breedName, (Pair<String,String> breedName) -> {
-            return mRepository.getMoreImages(breedName.first, breedName.second);
+                return  mRepository.loadMoreImages(breedName.first, breedName.second);
         });
 
     }
@@ -33,7 +35,7 @@ public class BreedImagesViewModel extends AndroidViewModel {
         this.breedName.setValue(breedName);
     }
 
-    public LiveData<List<String>> getMoreImages() {
+    public LiveData<Resource<List<DogImageEntity>>> getMoreImages() {
         return mDogBreedMorePictures;
     }
 }

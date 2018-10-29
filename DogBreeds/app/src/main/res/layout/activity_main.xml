@@ -23,14 +23,4 @@
 
     <include layout="@layout/content_main" />
 
-    <ProgressBar
-        android:id="@+id/progressBar1"
-        style="?android:attr/progressBarStyleLarge"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="100dp"
-        android:visibility="visible"
-        app:layout_anchor="@id/toolbar"
-        app:layout_anchorGravity="center_vertical|center_horizontal" />
-
 </android.support.design.widget.CoordinatorLayout>
